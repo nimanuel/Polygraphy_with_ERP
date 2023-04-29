@@ -1,0 +1,8 @@
+#Ignore Input folder
+data_store/
+
+#Ignore test file
+test.py
+
+#Ignore jupyter cache
+*.pyc
