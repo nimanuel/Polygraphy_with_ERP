@@ -1,0 +1,2 @@
+%set1-90  set2-20 set3-80 set4-10
+%event code used to extract baseline and stimulus period are: 6,15,102, [6,15]: baseline; [15:102]:stimulus period
