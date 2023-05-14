@@ -27,8 +27,40 @@ for iRow = 2 : size(t, 1)
 
     eeg = table2array(row(:,2:end));
 
+    % get the maximum amplitude
+    max_amplitude = max(abs(eeg));
+
     plot(times, eeg, DisplayName=channel_name);
     hold on
+    % display the result
+    plot(times(eeg == max_amplitude), max_amplitude,'r*', DisplayName='max amplitude');
+    
+
+    disp(['features of: ', channel_name]);
+    disp(['max amplitude: ', num2str(max_amplitude)]);
+
+    % Calculate the positive area under the curve
+    positive_eeg = eeg;
+    positive_eeg(positive_eeg < 0) = 0; % set negative values to zero
+    positive_area = trapz(times, positive_eeg);
+    disp(['positive area: ', num2str(positive_area)]);
+
+    % Calculate the negative area under the curve
+    negative_eeg = eeg;
+    negative_eeg(negative_eeg > 0) = 0; % set negative values to zero
+    negative_area = trapz(times, negative_eeg);
+    disp(['negative area: ', num2str(negative_area)]);
+
+    % Calculate the total area
+    total_area = positive_area + negative_area;
+    disp(['total area: ', num2str(total_area)]);
+
+    disp('-------------------');
+    
+    hold on
+    
 end
+
+
 legend
 grid on
