@@ -7,49 +7,38 @@ close all;
 % band pass filter 0.1-30 HZ
 % sampling at 500 Hz
 
-filename = ".\honest\subject1\session1\probe\probe.txt";
+filename =".\lying\subject1\session1\probe\probe.txt";
 % signal = textscan(FILE,'%n', 1, 'Delimiter', ' ');
 
-signal = readtable(filename, 'Delimiter', ' ','VariableNamingRule','preserve');
-
+table = readtable(filename);
 
 
                                         
 Fs = 500; %Hz
 Ts = 1/Fs;                                       
-t = Ts*(1:width(signal))*2;   
+t = Ts*(1:width(table));   
 
-% channel_name = 'FP1';
-% row = t(1, :);
-% eeg = table2array(row(:,2:end));
-
+eeg_fp1 = table2array(table(1,1:end));
+eeg_fp2 = table2array(table(2,1:end));
+eeg_p3 = table2array(table(9,1:end));
+eeg_p4 = table2array(table(11,1:end));
 
 figure
-plot(t, signal)
-% xticks(ticks)% Time Vector
+plot(t, eeg_fp1);
+hold on;
+plot(t, eeg_fp2);
+hold on;
+plot(t, eeg_p3);
+hold on;
+plot(t, eeg_p4);
+hold on;
+legend('Fp1', 'Fp2', 'P3', 'P4');
+
 grid
 title('Time Domain')
 xlabel('Time (s)')
 ylabel('Amplitude (Units)')
 
-% fclose(FILE);
+hold off;
+
 %%
-%_____________________________________________________________
-
-% Open the text file for reading
-fileID = fopen('your_file.txt', 'r');
-
-% Specify the format of the data in the file
-formatSpec = '%f %f %f %f';  % Assuming the row contains four numeric values
-
-% Read the row using textscan
-rowData = textscan(fileID, formatSpec, 1, 'Delimiter', ' ');
-
-% Close the file
-fclose(fileID);
-
-% Extract the data from the cell array
-data = cell2mat(rowData);
-
-% Display the row data
-disp(data);
