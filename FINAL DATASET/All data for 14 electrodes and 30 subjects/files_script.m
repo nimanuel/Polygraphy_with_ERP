@@ -1,0 +1,188 @@
+clear; close all; clc;
+
+all_channels = [1,2,3,4,5,6,7,8,9,10,11,12];
+channels_close_to_muse = [1,2,9,11];
+
+%% --------- LYING ------------ %
+
+% Specify the directory path
+directory = 'lying/';
+
+sum_of_signals = zeros(1.6/0.002);
+signals = struct;
+
+for key = ["probe", "target", "irrelevant"]
+    % Recursively iterate over files in the directory and subdirectories
+    [sum_sig, file_counter] = processFilesToSignals(directory, key, [10], 1.6, 0.002, 0, sum_of_signals);
+    signal = sum_sig / file_counter;
+    signals.(key) = signal;
+end
+
+save("lying", "signals");
+
+%%
+t_start = 0;
+t_end = 1.6;
+t = linspace(t_start, t_end, length(irrelevant)).';
+
+f_low = 0.3;
+
+probe      = highpass(signals.probe, f_low, 500);
+target     = highpass(signals.target, f_low, 500);
+irrelevant = highpass(signals.irrelevant, f_low, 500);
+
+
+figure;
+ax1 = subplot(2,1,1);
+plot(t, probe, Color='blue');
+hold on
+plot(t, target, Color='red');
+hold on
+plot(t, irrelevant, Color='green');
+hold on
+xlabel("time [sec]")
+title("LYING")
+legend('Probe', 'Target', 'Irrelevant')
+
+hold on
+scatter([0.5], 1, 'DisplayName', 'picture is shown', MarkerFaceColor='red', MarkerEdgeColor='red');
+scatter([0.8], 1, 'DisplayName', 'estimated P300', MarkerFaceColor='blue', MarkerEdgeColor='blue');
+hold on
+
+%% --------- HONEST ------------ %
+
+% Specify the directory path
+directory = 'honest/';
+
+sum_of_signals = zeros(1.6/0.002);
+
+% Recursively iterate over files in the directory and subdirectories
+[sum_sig, file_counter] = processFilesToSignals(directory, 'probe', [10], 1.6, 0.002, 0, sum_of_signals);
+sum_sig = bandpass(sum_sig, [0.3, 30], 500);
+probe = sum_sig / file_counter;
+
+[sum_sig, file_counter] = processFilesToSignals(directory, 'target', [10], 1.6, 0.002, 0, sum_of_signals);
+sum_sig = bandpass(sum_sig, [0.3, 30], 500);
+target = sum_sig / file_counter;
+
+[sum_sig, file_counter] = processFilesToSignals(directory, 'irrelevant', [10], 1.6, 0.002, 0, sum_of_signals);
+sum_sig = bandpass(sum_sig, [0.3, 30], 500);
+irrelevant = sum_sig / file_counter;
+
+%%
+
+t_start = 0;
+t_end = 1.6;
+t = linspace(t_start, t_end, length(irrelevant)).';
+
+ax2 = subplot(2,1,2);
+plot(t, probe, Color='blue');
+hold on
+plot(t, target, Color='red');
+hold on
+plot(t, irrelevant, Color='green');
+hold on
+xlabel("time [sec]")
+title("HONEST")
+legend('Probe', 'Target', 'Irrelevant')
+
+hold on
+scatter([0.5], 1, 'DisplayName', 'picture is shown', MarkerFaceColor='red', MarkerEdgeColor='red');
+scatter([0.8], 1, 'DisplayName', 'estimated P300', MarkerFaceColor='blue', MarkerEdgeColor='blue');
+
+linkaxes([ax1, ax2], "xy");
+
+
+%%
+
+% Recursive function to process files
+function [sum_of_signals, file_counter]= processFilesToSignals(dirPath, obj_type, ch_nums, seg_len, sample_rate, file_counter, sum_of_signals)
+    % Get a structure array containing information about the files
+    files = dir(dirPath);
+    % Iterate over each file in the directory
+    for i = 1:numel(files)
+        % Obtain the file name
+        filename = files(i).name;
+
+        % Exclude "." and ".." entries
+        if strcmp(filename, '.') || strcmp(filename, '..')
+            continue;
+        end
+        
+        % Construct the full file path
+        filePath = fullfile(dirPath, filename);
+        
+        % Check if the item is a file (excluding directories)
+        if files(i).isdir == 0 && contains(filename, obj_type)
+
+            % Perform the desired operations on the file
+            data = load(filePath);
+            data = data.';
+            [temp_signal, is_signal_good] = avg_with_channels(data, seg_len, sample_rate, ch_nums);
+
+            if (is_signal_good)
+                sum_of_signals = sum_of_signals + temp_signal;
+            else
+                file_counter = file_counter - 1;
+            end
+            
+            % Display the file name (optional)
+            disp(filePath);
+            file_counter = file_counter + 1;
+        else
+            % Recursively process files in subdirectories
+            [sum_of_signals, file_counter] = processFilesToSignals(filePath, obj_type, ch_nums, seg_len, sample_rate, file_counter, sum_of_signals);
+        end
+    end
+
+end
+
+%%
+function [mean_signal, is_relevant] = avg_of_segments(signal, segment_len, sample_rate)
+
+    numSegments = floor(length(signal)*sample_rate / segment_len);
+
+    if (length(signal) == numSegments*segment_len/sample_rate)
+        % Reshape the signal so that each segment is in a separate row
+        reshaped_signal = reshape(signal, segment_len/sample_rate, numSegments);
+        sum_signal = sum(reshaped_signal,2);
+        mean_signal = sum_signal / numSegments;
+        is_relevant = true;
+    else
+        mean_signal = zeros(segment_len/sample_rate);
+        is_relevant = false;
+    end
+    
+end
+%%
+
+function [mean_signal_channels, is_signal_good] = avg_with_channels(signal_w_all_channels, segment_len, sample_rate, channels)
+
+    sum_of_mean_signals = zeros(segment_len/sample_rate);
+    num_of_channels_used = length(channels);
+    is_signal_good = true;
+    for i = 1:numel(channels)
+        % Access the current element using the loop index
+        ch_num = channels(i);
+        
+        % Perform operations on the element
+        signal_one_channel = signal_w_all_channels(:,ch_num);
+        [mean_signal, is_relevant] = avg_of_segments(signal_one_channel, segment_len, sample_rate);
+        if (is_relevant)
+            sum_of_mean_signals = sum_of_mean_signals + mean_signal;
+        else
+            num_of_channels_used = num_of_channels_used - 1;
+        end
+    end
+    
+    if (num_of_channels_used > 0)
+        mean_signal_channels = sum_of_mean_signals/length(channels);
+    else
+        is_signal_good = false;
+        mean_signal_channels = zeros(segment_len/sample_rate);
+    end
+
+end
+
+
+%%
