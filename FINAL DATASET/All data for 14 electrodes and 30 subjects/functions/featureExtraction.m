@@ -94,6 +94,7 @@ function bp_result_mat = getBandPowerMat(sub_list, honest_path, guilty_path, fs,
         load(guilty_path, var_name);
         signal = eval(var_name);
         signal = avg_with_channels(signal, 1.6, 0.002, [channel]);
+        signal = signal(0.6*500:0.6*500, :);
         bp_result_mat(5*(i-1)+1:5*i,1) = getBandPowers(signal, fs).';
     end
 
@@ -105,6 +106,7 @@ function bp_result_mat = getBandPowerMat(sub_list, honest_path, guilty_path, fs,
         load(honest_path, var_name);
         signal = eval(var_name);
         signal = avg_with_channels(signal, 1.6, 0.002, [channel]);
+        signal = signal(0.6*500:0.6*500, :);
         bp_result_mat(5*(i-1+num_signals)+1:5*(i+num_signals),1) = getBandPowers(signal, fs).';
     end
 
