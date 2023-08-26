@@ -8,15 +8,15 @@ channels_close_to_muse = [1,2,9,11];
 
 % Specify the paths to data files
 
-probe_path = "../data/lying_probe_renorm.mat";
-target_path = "../data/lying_target_renorm.mat";
-irrelevant_path = "../data/lying_irrelevant_renorm.mat";
+probe_path = "../data/lying_probe.mat";
+target_path = "../data/lying_target.mat";
+irrelevant_path = "../data/lying_irrelevant.mat";
 path_list = {probe_path, target_path, irrelevant_path};
 signal = zeros(3, 1.6/0.002);
 
 for i = 1:length(path_list) 
     path = path_list{i};
-    [sum_sig, counter] = processSignals(path, channels_close_to_muse, 1.6, 0.002);
+    [sum_sig, counter] = processSignals(path, 10, 1.6, 0.002);
     signal = sum_sig / counter;
 
     signals(i, :) = signal;
@@ -24,8 +24,8 @@ end
 
 
 %%
-t_start = 0;
-t_end = 1.6;
+t_start = -0.5;
+t_end = 1.1;
 t = linspace(t_start, t_end, length(signals(1, :))).';
 
 f_low = 0.3;
@@ -53,8 +53,8 @@ plot(t, target, "b--",'LineWidth',1);
 hold on;
 plot(t, irrelevant, "m-.",'LineWidth',1);
 hold on;
-scatter([0.5], 1, 'DisplayName', 'picture is shown', MarkerFaceColor='red', MarkerEdgeColor='red');
-scatter([0.8], 1, 'DisplayName', 'estimated P300', MarkerFaceColor='blue', MarkerEdgeColor='blue');
+% scatter([0.5], 1, 'DisplayName', 'picture is shown', MarkerFaceColor='red', MarkerEdgeColor='red');
+% scatter([0.8], 1, 'DisplayName', 'estimated P300', MarkerFaceColor='blue', MarkerEdgeColor='blue');
 hold on;
 xlabel("time [sec]");
 title("LYING");
@@ -65,23 +65,23 @@ hold on;
 %% --------- HONEST ------------ %
 
 % Specify the paths to data files
-probe_path = "../data/honest_probe_renorm.mat";
-target_path = "../data/honest_target_renorm.mat";
-irrelevant_path = "../data/honest_irrelevant_renorm.mat";
+probe_path = "../data/honest_probe.mat";
+target_path = "../data/honest_target.mat";
+irrelevant_path = "../data/honest_irrelevant.mat";
 path_list = {probe_path, target_path, irrelevant_path};
 signal = zeros(3, 1.6/0.002);
 
 for i = 1:length(path_list) 
     path = path_list{i};
-    [sum_sig, counter] = processSignals(path, channels_close_to_muse, 1.6, 0.002);
+    [sum_sig, counter] = processSignals(path, 10, 1.6, 0.002);
     signal = sum_sig / counter;
     signals(i, :) = signal;
 end
 
 
 %%
-t_start = 0;
-t_end = 1.6;
+t_start = -0.5;
+t_end = 1.1;
 t = linspace(t_start, t_end, length(signals(1, :))).';
 
 f_low = 0.3;
@@ -110,8 +110,8 @@ plot(t, target, "b--",'LineWidth',1);
 hold on;
 plot(t, irrelevant, "m-.",'LineWidth',1);
 hold on;
-scatter([0.5], 1, 'DisplayName', 'picture is shown', MarkerFaceColor='red', MarkerEdgeColor='red');
-scatter([0.8], 1, 'DisplayName', 'estimated P300', MarkerFaceColor='blue', MarkerEdgeColor='blue');
+% scatter([0.5], 1, 'DisplayName', 'picture is shown', MarkerFaceColor='red', MarkerEdgeColor='red');
+% scatter([0.8], 1, 'DisplayName', 'estimated P300', MarkerFaceColor='blue', MarkerEdgeColor='blue');
 hold on;
 xlabel("time [sec]");
 title("HONEST");

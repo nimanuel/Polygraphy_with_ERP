@@ -1,5 +1,5 @@
 
-filepath = '..\data\lying_probe_w_artifacts.mat';
+filepath = '..\data\lying_probe.mat';
 save(filepath);
 
 processFiles("..\lying", filepath, 'probe.txt')

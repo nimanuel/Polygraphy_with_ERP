@@ -1,7 +1,7 @@
 
 % Specify the file path
-file_path = '../data/lying_target.mat';
-save_path = '../data/lying_target_renorm.mat';
+file_path = '../data/lying_probe.mat';
+save_path = '../data/lying_probe_renorm.mat';
 
 renormalize(file_path, save_path);
 

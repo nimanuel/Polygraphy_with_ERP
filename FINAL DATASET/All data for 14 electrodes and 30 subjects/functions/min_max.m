@@ -17,24 +17,31 @@ guilty_target_path = '../data/lying_target_renorm.mat';
 honest_irr_path = '../data/honest_irrelevant_renorm.mat';
 guilty_irr_path = '../data/lying_irrelevant_renorm.mat';
 
+var_names_g_probe = getVarNames(guilty_probe_path);
+var_names_g_target = getVarNames(guilty_target_path);
+var_names_g_irrelevant = getVarNames(guilty_irr_path);
 
-min_result_p = getMinVector(guilty_probe_path, honest_probe_path, subject_list, t_low, t_high, Ts, 10);
-max_result_p = getMaxVector(guilty_probe_path, honest_probe_path, subject_list, t_low, t_high, Ts, 10);
+var_names = intersect(intersect(var_names_g_probe,var_names_g_target,'stable'),...
+    var_names_g_irrelevant,'stable');
 
-min_result_t = getMinVector(guilty_target_path, honest_target_path, subject_list, t_low, t_high, Ts, 10);
-max_result_t = getMaxVector(guilty_target_path, honest_target_path, subject_list, t_low, t_high, Ts, 10);
+min_result_p = getMinVector(guilty_probe_path, honest_probe_path, var_names, t_low, t_high, Ts, 10);
+max_result_p = getMaxVector(guilty_probe_path, honest_probe_path, var_names, t_low, t_high, Ts, 10);
 
-min_result_i = getMinVector(guilty_irr_path, honest_irr_path, subject_list, t_low, t_high, Ts, 10);
-max_result_i = getMaxVector(guilty_irr_path, honest_irr_path, subject_list, t_low, t_high, Ts, 10);
+min_result_t = getMinVector(guilty_target_path, honest_target_path, var_names, t_low, t_high, Ts, 10);
+max_result_t = getMaxVector(guilty_target_path, honest_target_path, var_names, t_low, t_high, Ts, 10);
+
+min_result_i = getMinVector(guilty_irr_path, honest_irr_path, var_names, t_low, t_high, Ts, 10);
+max_result_i = getMaxVector(guilty_irr_path, honest_irr_path, var_names, t_low, t_high, Ts, 10);
 
 min_max_result = [min_result_p; max_result_p; min_result_t; max_result_t; min_result_i; max_result_i];
 
 %% plot
 
 % lengths of variables:
-nDataSets = 6;  % guilty/honest OR min/max
-nVars = 2;      % num of subcategories (e.g, freq bands or P/T/I)
-nVals = 5;      % num of signals taken (for each data set)
+nDataSets = 6;                          % guilty/honest OR min/max
+nVars = 2;                              % num of subcategories (e.g, freq bands or P/T/I)
+nVals = length(min_max_result)/12;       % num of signals taken (for each data set)
+
 data = min_max_result;
 
 % box chart
@@ -46,7 +53,7 @@ dataSet = categorical([ones(nVars*nVals,1); ...
     ones(nVars*nVals,1)*4; ...
     ones(nVars*nVals,1)*5; ...
     ones(nVars*nVals,1)*6;]);
-dataSet = renamecats(dataSet,{'Min - Probe', 'Max - Probe', 'Min - Target', 'Max - Target', 'Min - Irrelevant', 'Max - Irrelevant'});
+dataSet = renamecats(dataSet,{'Min', 'Max', 'Min - Target', 'Max - Target', 'Min - Irrelevant', 'Max - Irrelevant'});
 % Create column vector to indicate the variable
 clear var
 var(1:nVals,1) = "Var1";
@@ -58,7 +65,7 @@ testData = table(data,dataSet,Var);
 % Actual visualization code using boxchart
 boxchart(testData.dataSet,testData.data,"GroupByColor",testData.Var)
 legend({'Guilty', 'Honest'},'Location','bestoutside','Orientation','vertical')
-title('Min vs Max values')
+title('Min vs Max values for Each type of signal in 2250 Samples')
 grid on
 grid minor
 
@@ -69,21 +76,21 @@ function min_vec = getMinVector(guilty_path, honest_path, sub_list, t_low, t_hig
 
     % guilty 
     for i = 1:num_signals
-        var_name = sub_list{i};
+        var_name = sub_list{:, i};
         load(guilty_path, var_name);
         signal = eval(var_name);
         signal = avg_with_channels(signal, 1.6, 0.002, [channel]);
-        signal = signal(t_low/Ts:t_high/Ts);
+        signal = signal(floor(t_low/Ts):floor(t_high/Ts));
         min_vec(i,1) = min(abs(signal));
     end
 
     % honest
     for i = 1:num_signals
-        var_name = sub_list{i};
+        var_name = sub_list{:, i};
         load(honest_path, var_name);
         signal = eval(var_name);
         signal = avg_with_channels(signal, 1.6, 0.002, [channel]);
-        signal = signal(t_low/Ts:t_high/Ts);
+        signal = signal(floor(t_low/Ts):floor(t_high/Ts));
         min_vec((num_signals+i),1) = min(abs(signal));
     end
 end
