@@ -2,9 +2,9 @@
 % this code takes tha data in table form, from "data_table_form" directory 
 % and plots it
 %% displaySignals
-all_channels = [1,2,3,4,5,6,7,8,9,10,11,12];
 
-% cannels tat correlate with MUSE's channels
+
+all_channels = [1,2,3,4,5,6,7,8,9,10,11,12];
 channels_close_to_muse = [1,2,9,11];
 
 %% --------- LYING ------------ %

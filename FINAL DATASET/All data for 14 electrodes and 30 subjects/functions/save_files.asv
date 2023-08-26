@@ -1,4 +1,4 @@
-% orgenizes the data in .mat tables for easy usedata_table_form
+% orgenizes the data in mat. tables for easy usedata_table_form
 % lying probe
 mkdir("..\data_table_form");
 filepath = '..\data_table_form\lying_probe.mat';
@@ -18,17 +18,17 @@ processFiles("..\lying", filepath, 'irrelevant.txt')
 % honest probe
 filepath = '..\data_table_form\honest_probe.mat';
 save(filepath);
-processFiles("..\honest", filepath, 'probe.txt')
+processFiles("..\lying", filepath, 'probe.txt')
 
 % honest target
 filepath = '..\data_table_form\honest_target.mat';
 save(filepath);
-processFiles("..\honest", filepath, 'target.txt')
+processFiles("..\lying", filepath, 'target.txt')
 
 % honest irrelevant
 filepath = '..\data_table_form\honest_irrelevant.mat';
 save(filepath);
-processFiles("..\honest", filepath, 'irrelevant.txt')
+processFiles("..\lying", filepath, 'irrelevant.txt')
 
 %%
 
@@ -54,15 +54,21 @@ function []= processFiles(dir_path, save_path, stim_type)
 
         % Check if the item is a file (excluding directories)
         if files(i).isdir == 0 && strcmp(filename,stim_type)
-        
+
+            % Perform the desired operations on the file
+
             % Load the data
             data = load(file_path);
             data = data.';
             data_with_avg = data;
             dir_list = strsplit(file_path, '\');
             var_name = strjoin({dir_list{3}, dir_list{4}}, '_');
+
             S.(var_name) = data_with_avg;
+            
             save(save_path, '-struct', 'S', var_name, '-append');  
+
+            % Display the file name (optional)
             disp(file_path);
 
         else
