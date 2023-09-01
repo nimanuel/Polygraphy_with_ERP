@@ -165,18 +165,10 @@ end
 %%
 function [mean_signal, is_relevant] = avg_of_segments(signal, segment_len, sample_rate)
 
-    numSegments = floor(length(signal)*sample_rate / segment_len);
-
-    if (length(signal) == numSegments*segment_len/sample_rate)
-        % Reshape the signal so that each segment is in a separate row
-        reshaped_signal = reshape(signal, segment_len/sample_rate, numSegments);
-        sum_signal = sum(reshaped_signal, 2);
-        mean_signal = (sum_signal / numSegments).';
-        is_relevant = true;
-    else
-        mean_signal = zeros(1, segment_len/sample_rate);
-        is_relevant = false;
-    end
+    numSegments = size(signal,2);
+    sum_signal = sum(signal, 2);
+    mean_signal = (sum_signal / numSegments).';
+    is_relevant = true;
     
 end
 %%
@@ -191,7 +183,7 @@ function [mean_signal_channels, is_signal_good] = avg_with_channels(signal_w_all
         ch_num = channels(i);
         
         % Perform operations on the element
-        signal_one_channel = signal_w_all_channels(:,ch_num);
+        signal_one_channel = signal_w_all_channels(:,:, ch_num);
         [mean_signal, is_relevant] = avg_of_segments(signal_one_channel, segment_len, sample_rate);
         if (is_relevant)
             sum_of_mean_signals = sum_of_mean_signals + mean_signal;

@@ -71,7 +71,7 @@ function []= processFiles(dir_path, save_path, stim_type)
             data = data.';            
             numRows = size(data, 1);
             numColumns = size(data, 2);
-            threeD_Array = reshape(data, numRows/box_num, numColumns, box_num);
+            threeD_Array = reshape(data, box_num, numRows/box_num, numColumns);
 
   
             data_with_avg = threeD_Array;
