@@ -1,4 +1,5 @@
-%% get variable names
+% TODO: HOW USES IT + DESCRIPTION
+% get variable names
 function var_names_list = getVarNames(mat_path)
     var_names = whos("-file", mat_path);
     var_names_list = {};

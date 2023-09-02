@@ -2,8 +2,7 @@
 
 function clean_data = ICA(path)
 
-    addpath("..");
-
+    constScript; % holds all the constants
     % Load the 3D matrix from the file
     load(path, 'matrix');
 
@@ -26,5 +25,5 @@ function clean_data = ICA(path)
 end
 %%
 
-% x = ICA("../data_table_form/honest_probe.mat");
+ x = ICA("../data_table_form/honest_probe.mat");
 
