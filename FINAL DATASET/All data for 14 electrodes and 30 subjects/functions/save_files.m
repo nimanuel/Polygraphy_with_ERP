@@ -1,4 +1,4 @@
-% orgenizes the data in .mat tables for easy usedata_table_form
+% orgenizes the row data from text files,to .mat tables for easy usedata_table_form
 folderName = "..\data_table_form";  
 
 % Check if the folder exists
