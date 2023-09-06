@@ -6,6 +6,7 @@ sample_length = 1.6; %sec
 number_of_sumples = 800;
 TAG_NUM = 3; % Probe, Target, Irrelevant
 SUBJECT_NUMBER = 15;
+SESSION_NUMBER = 5;
 % % 
 % all_channels = [1,2,3,4,5,6,7,8,9,10,11,12];
 % 
