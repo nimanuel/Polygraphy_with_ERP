@@ -29,14 +29,12 @@ disp(Table_for_subj);
 % disp(data_cell);
 %%
 
-data=load(lying_path_list{1});
+% TODO: only for lying probe
+data = load(lying_path_list{1});
 data_subject = {};
 data_session = {};
 for subjectNumber = 1:SUBJECT_NUMBER
     for sessionNumber = 1:5
-        
-%         for subject_num = 1:SUBJECT_NUMBER  %       ????
-%             data_cell{end + 1} = createSubjectArray(channel_matrix, subject_num);
             try
                 data_session{end + 1} = create_subject_table(data.("subject"+subjectNumber+"_session"+sessionNumber),elects);
             catch
@@ -48,38 +46,10 @@ for subjectNumber = 1:SUBJECT_NUMBER
 %     end
 end
 sub5ses2e1=data_subject{5}{2}(:,1,1);
-disp(1);
-
-% target = (1:10);
-% subject1.honest_target = target;
-% subject1.honest_target = target;
-% 
-% subject1.probe = target;
-% subject2.target = target;
-% 
-% cell = {subject1,subject2};
-% disp(cell{1}.target);
-
-%%
-
-temp = create_subject_table(1,elects);
-
 
 
 %%
-% add 
-% 
-% function[sub] = createSubjectArray(channel_matrix, subject_num)
-%     
-%     fieldName = ['subject' num2str(subject_num)];
-%     subStruct.channels = channel_matrix;
-%     sub.(fieldName) = subStruct;
-% 
-% end
-% 
 
-
-%%
 function [subject_table] = create_subject_table(session,elects)
 
 constScript; % holds all the constants
