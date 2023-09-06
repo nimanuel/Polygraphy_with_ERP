@@ -41,11 +41,12 @@ for subjectNumber = 1:SUBJECT_NUMBER
                 continue;
             end
         end
-        data_subject{subjectNumber} = data_session;
+        data_subject{subjectNumber} = data_session.';
         data_session = {};
 %     end
 end
-sub5ses2e1=data_subject{5}{2}(:,1,1);
+save("data_subject");
+% sub5ses2e1=data_subject{5}{2}(:,1,1);
 
 
 %%
@@ -63,7 +64,7 @@ constScript; % holds all the constants
 %     fieldName = ['subject' num2str(subject_num) '_session1'];
 %     path1 = lying_path_list{1};
 %     load(path1,"subject1_session1");
-    subject_table = zeros( [size(session,1,2) 5]);
+    subject_table = zeros( [size(session,1,2) 5] );
     counter =1;
     for i = 1:CHANNEL_NUMBER
         if (ismember(i, elects))

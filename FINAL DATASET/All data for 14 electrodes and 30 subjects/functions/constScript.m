@@ -26,7 +26,7 @@ lying_path_list = {lying_probe_path, lying_target_path, lying_irrelevant_path};
 honest_path_list = {honest_probe_path, honest_target_path, honest_irrelevant_path};
 
 % EEG toolbix path
-% addpath("../EEG-Feature-Extraction-Toolbox-main");
+addpath("../EEG-Feature-Extraction-Toolbox-main");
 % Preprocessing
 f_low = 0.3;
 f_high = 30;
