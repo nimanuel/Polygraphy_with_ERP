@@ -5,7 +5,7 @@ constScript; % holds all the constants
 %%
 %curr_path = lying_path_list{1};
 
-cell_arr_lying_p = {createStructInner(lying_path_list{1})};
+cell_arr_lying_p = createStructInner(lying_path_list{1});
 cell_arr_lying_t = createStructInner(lying_path_list{2});
 cell_arr_lying_i = createStructInner(lying_path_list{3});
 cell_arr_honest_p = createStructInner(honest_path_list{1});
@@ -13,11 +13,16 @@ cell_arr_honest_t = createStructInner(honest_path_list{2});
 cell_arr_honest_i = createStructInner(honest_path_list{3});
 
 
+%%
 
-final_data = struct('lying_probe', cell_arr_lying_p,'lying_target', cell_arr_lying_t, ...
-    'lying_irrelevant', cell_arr_lying_i,'honest_probe', cell_arr_honest_p, ...
-    'honest_target', cell_arr_honest_t,'honest_irrelevant', cell_arr_honest_i);
+final_data = struct('lying_probe', {cell_arr_lying_p},'lying_target', {cell_arr_lying_t}, ...
+    'lying_irrelevant', {cell_arr_lying_i},'honest_probe', {cell_arr_honest_p}, ...
+    'honest_target', {cell_arr_honest_t},'honest_irrelevant', {cell_arr_honest_i});
 save("final_data");
+
+%% try to use final data
+stam_signal_name = final_data.honest_irrelevant{1, 6000, 1};
+disp(stam_signal);
 
 %%
 function [cell_arr_inner] = createStructInner(curr_path)
@@ -25,7 +30,7 @@ function [cell_arr_inner] = createStructInner(curr_path)
 % and place them all in a cell array
     constScript; % holds all the constants
     cell_arr_inner = {};
-    [filepath,filename,ext] = fileparts(curr_path);
+    [~,filename,~] = fileparts(curr_path);
     data = load(curr_path);
     for subjectNumber = 1:SUBJECT_NUMBER
 
