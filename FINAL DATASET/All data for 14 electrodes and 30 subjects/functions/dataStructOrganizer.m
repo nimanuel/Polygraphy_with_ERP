@@ -1,29 +1,36 @@
-% dataStructOrganizer
-% orgenizes the data in cell arrays of subjects
-% each subject holds a matrix of 4 cannels, and an average of the channels
-constScript; % holds all the constants
-%%
-%curr_path = lying_path_list{1};
-
-cell_arr_lying_p = createStructInner(lying_path_list{1});
-cell_arr_lying_t = createStructInner(lying_path_list{2});
-cell_arr_lying_i = createStructInner(lying_path_list{3});
-cell_arr_honest_p = createStructInner(honest_path_list{1});
-cell_arr_honest_t = createStructInner(honest_path_list{2});
-cell_arr_honest_i = createStructInner(honest_path_list{3});
-
-
-%%
-
-final_data = struct('lying_probe', {cell_arr_lying_p},'lying_target', {cell_arr_lying_t}, ...
-    'lying_irrelevant', {cell_arr_lying_i},'honest_probe', {cell_arr_honest_p}, ...
-    'honest_target', {cell_arr_honest_t},'honest_irrelevant', {cell_arr_honest_i});
-save("final_data");
+% % dataStructOrganizer
+% % orgenizes the data in cell arrays of subjects
+% % each subject holds 
+% % 
+% % 
+% % a matrix of 4 cannels, and an average of the channels
+% constScript; % holds all the constants
+% %%
+% %curr_path = lying_path_list{1};
+% 
+% cell_arr_lying_p = createStructInner(lying_path_list{1});
+% cell_arr_lying_t = createStructInner(lying_path_list{2});
+% cell_arr_lying_i = createStructInner(lying_path_list{3});
+% cell_arr_honest_p = createStructInner(honest_path_list{1});
+% cell_arr_honest_t = createStructInner(honest_path_list{2});
+% cell_arr_honest_i = createStructInner(honest_path_list{3});
+% 
+% 
+% %% 
+% 
+% final_data = struct('lying_probe', {cell_arr_lying_p},'lying_target', {cell_arr_lying_t}, ...
+%     'lying_irrelevant', {cell_arr_lying_i},'honest_probe', {cell_arr_honest_p}, ...
+%     'honest_target', {cell_arr_honest_t},'honest_irrelevant', {cell_arr_honest_i});
+% save("final_data");
 
 %% try to use final data
-stam_signal_name = final_data.honest_irrelevant{1, 6000, 1};
-disp(stam_signal);
 
+
+final_data = calcAvg(final_data);
+
+stam_signal_name = final_data.honest_irrelevant{1, 5000}.tab;
+disp(stam_signal_name);
+% save("final_data");
 %%
 function [cell_arr_inner] = createStructInner(curr_path)
 % creates structs of all subjects, sessions,and itarations
@@ -51,6 +58,7 @@ function [cell_arr_inner] = createStructInner(curr_path)
     end
 end
 
+
 %%
 
 function [subject_table] = createSessionTable(session, repNumber)
@@ -71,6 +79,17 @@ function [subject_table] = createSessionTable(session, repNumber)
 end
 
 
+%%
+
+function [final_data] = calcAvg(final_data)
+    fields = fieldnames(final_data);
+    for i = 1:numel(fields)
+        field = fields{i};
+        for j =1:size(final_data.(field),2)
+            final_data.(field){1,j}.tab(5,:) = mean(final_data.(field){1,j}.tab(1:4,:));
+        end
+    end
+end
 
 
 
