@@ -27,10 +27,16 @@ for i = 1:numel(fields)
     field = fields{i};
     for j =1:size(final_data.(field),2)
         feature_vector = extractFeaturs(final_data.(field){1,j}.tab(5,:));
+        if final_data.(field){1,j}.sub > 2  % only 2 subjects for now. delete "if" later
+            continue;
+        end
         feat_comp_table{j,1} = structGetName(final_data.(field){1,j});
         for t = 2:(FEATURE_NUM+1)
             feat_comp_table{j,t} = feature_vector(t-1);
+           
         end
+       feat_comp_table{j,FEATURE_NUM+2} = structGetTag(final_data.(field){1,j});
+ 
     end
 end
 
@@ -48,4 +54,15 @@ writetable(T, filename);
 function [name] = structGetName(strt)
     name = "subject" + strt.sub + "_session" + strt.sess + "_rep" + strt.rep;
    
+end
+
+%%
+function [tag] = structGetTag(strt)
+    if (strcmp(strt.tag, "honest_target") || strcmp(strt.tag, "lying_target"))
+        tag = 'T';
+    elseif (strcmp(strt.tag, "lying_probe"))
+        tag = 'GP';
+    else
+        tag = 'else';
+    end
 end
