@@ -29,8 +29,7 @@ for i = 1:numel(fields)
         feature_vector = extractFeaturs(final_data.(field){1,j}.tab(5,:));
         feat_comp_table{j,1} = structGetName(final_data.(field){1,j});
         for t = 2:(FEATURE_NUM+1)
-            
-{j,t} = feature_vector(t-1);
+            feat_comp_table{j,t} = feature_vector(t-1);
         end
     end
 end
