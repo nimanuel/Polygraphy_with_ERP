@@ -8,12 +8,14 @@ fields = fieldnames(final_data);
 for i = 1:numel(fields)
     field = fields{i};
     for j =1:size(final_data.(field),2)
-        if final_data.(field){1,j}.sub > 2  % only 2 subjects for now. delete "if" later
-            continue;
-        elseif final_data.(field){1,j}.rep > 30
-            continue;
-        end
-        feature_vector = extractFeaturs(final_data.(field){1,j}.tab(5,:));
+        % if final_data.(field){1,j}.sub > 2  % only 2 subjects for now. delete "if" later
+        %     continue;
+        % elseif final_data.(field){1,j}.rep > 30
+        %     continue;
+        % end
+        cropped_signal = final_data.(field){1,j}.tab(5,:);
+        cropped_signal = cropped_signal(0.6*500:1*500);
+        feature_vector = extractFeaturs(cropped_signal);
         feat_comp_table{end+1,1} = structGetName(final_data.(field){1,j});
         for t = 2:(FEATURE_NUM+1)
             feat_comp_table{end,t} = feature_vector(t-1);
@@ -31,7 +33,7 @@ T = cell2table(feat_comp_table, 'VariableNames', {'Signal', 'min', 'max', 'entro
     'delta', 'alpha', 'beta', 'gamma', 'max slope', 'TAG'});  % Adjust 'VariableNames' for more columns.
 disp(T);
 % Write the table to an Excel file
-filename = 'feature_comparison_table.xlsx';
+filename = 'feature_comparison_table_bigger_range.xlsx';
 writetable(T, filename);
 
 %%
